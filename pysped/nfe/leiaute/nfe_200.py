@@ -920,7 +920,12 @@ class ICMS(nfe_110.ICMS):
             # Agora podemos ler os valores tranquilamente...
             #
             self.orig.xml       = arquivo
-            self.CST.xml        = arquivo
+
+            if self.regime_tributario == 1:
+                self.CSOSN.xml       = arquivo
+            else:
+                self.CST.xml        = arquivo
+
             self.modBC.xml      = arquivo
             self.vBC.xml        = arquivo
             self.pRedBC.xml     = arquivo
@@ -936,7 +941,6 @@ class ICMS(nfe_110.ICMS):
             self.vICMSSTRet.xml = arquivo
 
             if self.regime_tributario == 1:
-                self.CSOSN.xml       = arquivo
                 self.pCredSN.xml     = arquivo
                 self.vCredICMSSN.xml = arquivo
             else:
@@ -1168,7 +1172,7 @@ class ICMS(nfe_110.ICMS):
 class Imposto(nfe_110.Imposto):
     def __init__(self):
         super(Imposto, self).__init__()
-        self.vTotTrib = TagDecimal(nome='vTotTrib', codigo='M02', tamanho=[1, 15, 1], decimais=[1,  2,  2], raiz='//det/imposto', obrigatorio=False)
+        self.vTotTrib = TagDecimal(nome='vTotTrib', codigo='M02', tamanho=[1, 15, 1], decimais=[0,  2,  2], raiz='//det/imposto', obrigatorio=False)
         self.ICMS     = ICMS()
         self.ISSQN    = ISSQN()
 
@@ -1235,6 +1239,9 @@ class CIDE(nfe_110.CIDE):
 
 
 class Comb(nfe_110.Comb):
+    def __init__(self):
+        super(Comb, self).__init__()
+
     def get_xml(self):
         if not self.cProdANP.valor:
             return ''
@@ -1393,12 +1400,34 @@ class VeicProd(nfe_110.VeicProd):
 class Adi(nfe_110.Adi):
     def __init__(self):
         super(Adi, self).__init__()
+        self.nDraw = TagInteiro(nome='nDraw', codigo='I29a', tamanho=[1,  11],                     raiz='//adi', obrigatorio=False)
+
+    def get_xml(self):
+        xml = XMLNFe.get_xml(self)
+        xml += '<adi>'
+        xml += self.nAdicao.xml
+        xml += self.nSeqAdic.xml
+        xml += self.cFabricante.xml
+        xml += self.vDescDI.xml
+        xml += self.nDraw.xml
+        xml += '</adi>'
+        return xml
+
+    def set_xml(self, arquivo):
+        if self._le_xml(arquivo):
+            self.nAdicao.xml     = arquivo
+            self.nSeqAdic.xml    = arquivo
+            self.cFabricante.xml = arquivo
+            self.vDescDI.xml     = arquivo
+            self.nDraw.xml     = arquivo
+
+    xml = property(get_xml, set_xml)
 
 
 class DI(nfe_110.DI):
     def __init__(self):
         super(DI, self).__init__()
-
+        self.adi = []
 
 class Prod(nfe_110.Prod):
     def __init__(self):
@@ -2249,10 +2278,6 @@ class Ide(nfe_110.Ide):
         xml += self.hSaiEnt.xml
         xml += self.tpNF.xml
         xml += self.cMunFG.xml
-
-        for nr in self.NFref:
-            xml += nr.xml
-
         xml += self.tpImp.xml
         xml += self.tpEmis.xml
         xml += self.cDV.xml
@@ -2262,6 +2287,10 @@ class Ide(nfe_110.Ide):
         xml += self.verProc.xml
         xml += self.dhCont.xml
         xml += self.xJust.xml
+
+        for nr in self.NFref:
+            xml += nr.xml
+
         xml += '</ide>'
         return xml
 

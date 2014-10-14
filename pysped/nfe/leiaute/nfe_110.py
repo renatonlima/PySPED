@@ -800,8 +800,7 @@ class IPI(XMLNFe):
 
 
     def get_xml(self):
-        if not ((self.CST.valor in ('00', '49', '50', '99')) or
-           (self.qUnid.valor or self.vUnid.valor or self.vBC.valor or self.pIPI.valor or self.vIPI.valor)):
+        if self.CST.valor in ('01', '02', '03', '04', '51', '52', '53', '54', '55'):
             return ''
 
         #
@@ -3960,7 +3959,13 @@ class NFe(XMLNFe):
 
     def gera_nova_chave(self):
         chave = unicode(self.infNFe.ide.cUF.valor).zfill(2)
-        chave += unicode(self.infNFe.ide.dEmi.valor.strftime('%y%m')).zfill(4)
+
+        if str(self.infNFe.versao.valor) == '3.10':
+            chave += unicode(self.infNFe.ide.dhEmi.valor.strftime('%y%m')).zfill(4)
+
+        else:
+            chave += unicode(self.infNFe.ide.dEmi.valor.strftime('%y%m')).zfill(4)
+
         chave += unicode(self.infNFe.emit.CNPJ.valor).zfill(14)
         chave += unicode(self.infNFe.ide.mod.valor).zfill(2)
         chave += unicode(self.infNFe.ide.serie.valor).zfill(3)
