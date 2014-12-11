@@ -53,7 +53,8 @@ from .webservices_flags import (NFE_AMBIENTE_PRODUCAO,
                                 WS_NFE_DOWNLOAD,
                                 WS_NFE_INUTILIZACAO,
                                 WS_NFE_SITUACAO,
-                                WS_NFE_RECEPCAO_EVENTO)
+                                WS_NFE_RECEPCAO_EVENTO,
+                                WS_DFE_DISTRIBUICAO)
 
 
 METODO_WS = {
@@ -93,6 +94,10 @@ METODO_WS = {
         'webservice': 'NfeConsultaDest',
         'metodo'    : 'nfeConsultaNFDest',
     },
+    WS_DFE_DISTRIBUICAO: {
+        'webservice': 'NFeDistribuicaoDFe',
+        'metodo'    : 'nfeDistDFeInteresse'
+    }
 }
 
 SVRS = {
@@ -221,12 +226,14 @@ AN = {
         WS_NFE_RECEPCAO_EVENTO   : 'RecepcaoEvento/RecepcaoEvento.asmx',
         WS_NFE_CONSULTA_DESTINADAS: 'NFeConsultaDest/NFeConsultaDest.asmx',
         WS_NFE_DOWNLOAD: 'NfeDownloadNF/NfeDownloadNF.asmx',
+        WS_DFE_DISTRIBUICAO: 'NFeDistribuicaoDFe/NFeDistribuicaoDFe.asmx',
     },
     NFE_AMBIENTE_HOMOLOGACAO: {
         'servidor': 'hom.nfe.fazenda.gov.br',
         WS_NFE_RECEPCAO_EVENTO   : 'RecepcaoEvento/RecepcaoEvento.asmx',
         WS_NFE_CONSULTA_DESTINADAS: 'NFeConsultaDest/NFeConsultaDest.asmx',
         WS_NFE_DOWNLOAD: 'NfeDownloadNF/NfeDownloadNF.asmx',
+        WS_DFE_DISTRIBUICAO: 'NFeDistribuicaoDFe/NFeDistribuicaoDFe.asmx',
     },
 }
 
@@ -417,7 +424,7 @@ UFPR = {
         WS_NFE_RECEPCAO_EVENTO  : 'nfe-evento/NFeRecepcaoEvento',
     },
     NFE_AMBIENTE_HOMOLOGACAO: {
-        'servidor'              : 'homologacao.nfe3.fazenda.pr.gov.br',
+        'servidor'              : 'homologacao.nfe.fazenda.pr.gov.br',
         WS_NFE_AUTORIZACAO       : 'nfe/NFeAutorizacao3',
         WS_NFE_CONSULTA_AUTORIZACAO  : 'nfe/NFeRetAutorizacao3',
         WS_NFE_INUTILIZACAO     : 'nfe/NFeInutilizacao3',

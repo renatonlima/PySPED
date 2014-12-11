@@ -48,6 +48,7 @@ import locale
 import unicodedata
 import re
 import pytz
+from time import strftime
 
 
 NAMESPACE_NFE = 'http://www.portalfiscal.inf.br/nfe'
@@ -489,6 +490,13 @@ class TagDataHora(TagData):
     def set_valor(self, novo_valor):
         if isinstance(novo_valor, basestring):
             if novo_valor:
+                #
+                # Força a ignorar os microssegundos enviados pelo webservice
+                # de distribuição de DF-e
+                #
+                if '.' in novo_valor:
+                    novo_valor = novo_valor.split('.')[0]
+
                 novo_valor = datetime.strptime(novo_valor, '%Y-%m-%dT%H:%M:%S')
             else:
                 novo_valor = None
@@ -518,6 +526,18 @@ class TagDataHora(TagData):
             return self._valor_data.strftime('%d/%m/%Y %H:%M:%S')
 
 
+def fuso_horario_sistema():
+    diferenca = int(strftime('%z')) // 100
+
+    if diferenca < 0:
+        return pytz.timezone('Etc/GMT+' + str(diferenca * -1))
+
+    if diferenca > 0:
+        return pytz.timezone('Etc/GMT-' + str(diferenca))
+
+    return pytz.UTC
+
+
 class TagDataHoraUTC(TagData):
     def __init__(self, **kwargs):
         super(TagDataHoraUTC, self).__init__(**kwargs)
@@ -526,7 +546,7 @@ class TagDataHoraUTC(TagData):
         # Alterada para tornar a informação do fuso horário opcional
         #
         self._validacao = re.compile(r'(((20(([02468][048])|([13579][26]))-02-29))|(20[0-9][0-9])-((((0[1-9])|(1[0-2]))-((0[1-9])|(1\d)|(2[0-8])))|((((0[13578])|(1[02]))-31)|(((0[1,3-9])|(1[0-2]))-(29|30)))))T(20|21|22|23|[0-1]\d):[0-5]\d:[0-5]\d(-0[1-4]:00)?')
-        self._valida_fuso = re.compile(r'.*-0[1-4]:00$')
+        self._valida_fuso = re.compile(r'.*-0[0-9]:00$')
         self._brasilia = pytz.timezone('America/Sao_Paulo')
         self.fuso_horario = 'America/Sao_Paulo'
 
@@ -550,6 +570,12 @@ class TagDataHoraUTC(TagData):
                 novo_valor = None
 
         if isinstance(novo_valor, datetime) and self._valida(novo_valor):
+
+            if not novo_valor.tzinfo:
+                novo_valor = fuso_horario_sistema().localize(novo_valor)
+                novo_valor = pytz.UTC.normalize(novo_valor)
+                novo_valor = self._brasilia.normalize(novo_valor)
+
             self._valor_data = novo_valor
             self._valor_data = self._valor_data.replace(microsecond=0)
             try:
