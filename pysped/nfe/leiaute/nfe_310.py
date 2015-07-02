@@ -53,17 +53,17 @@ class Exporta(XMLNFe):
     def __init__(self):
         super(Exporta, self).__init__()
         self.UFSaidaPais   = TagCaracter(nome='UFSaidaPais'  , codigo='ZA02', tamanho=[2,  2], raiz='//NFe/infNFe/exporta', obrigatorio=False)
-        self.xLocEmbarq = TagCaracter(nome='xLocEmbarq', codigo='ZA03', tamanho=[1, 60], raiz='//NFe/infNFe/exporta', obrigatorio=False)
+        self.xLocExporta = TagCaracter(nome='xLocExporta', codigo='ZA03', tamanho=[1, 60], raiz='//NFe/infNFe/exporta', obrigatorio=False)
         self.xLocDespacho = TagCaracter(nome='xLocDespacho', codigo='ZA04', tamanho=[1, 60], raiz='//NFe/infNFe/exporta', obrigatorio=False)
 
     def get_xml(self):
-        if not (self.UFSaidaPais.valor or self.xLocEmbarq.valor):
+        if not (self.UFSaidaPais.valor or self.xLocExporta.valor):
             return ''
 
         xml = XMLNFe.get_xml(self)
         xml += '<exporta>'
         xml += self.UFSaidaPais.xml
-        xml += self.xLocEmbarq.xml
+        xml += self.xLocExporta.xml
         xml += self.xLocDespacho.xml
         xml += '</exporta>'
         return xml
@@ -71,18 +71,18 @@ class Exporta(XMLNFe):
     def set_xml(self, arquivo):
         if self._le_xml(arquivo):
             self.UFSaidaPais.xml   = arquivo
-            self.xLocEmbarq.xml = arquivo
+            self.xLocExporta.xml = arquivo
             self.xLocDespacho.xml = arquivo
 
     xml = property(get_xml, set_xml)
 
     def get_txt(self):
-        if not (self.UFSaidaPais.valor or self.xLocEmbarq.valor):
+        if not (self.UFSaidaPais.valor or self.xLocExporta.valor):
             return ''
 
         txt = 'ZA|'
         txt += self.UFSaidaPais.txt + '|'
-        txt += self.xLocEmbarq.txt + '|'
+        txt += self.xLocExporta.txt + '|'
         txt += self.xLocDespacho.txt + '|'
         txt += '\n'
         return txt
