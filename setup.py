@@ -47,7 +47,7 @@ setup(
     long_description = open('README.rst').read(),
     install_requires=[
         'Geraldo(>=0.4.16)',
-        'xmlsec(>=1.0.5)',
+        'PyXMLSec >= 0.3.0'
         'qrcode(>=5.3)',
         'py3o.template(>=0.9.11)',
         'sh(>=1.12.9)'
